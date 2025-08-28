@@ -1,0 +1,48 @@
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: apps/auth/Dockerfile.dev
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev auth
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+  gateway:
+    build:
+      context: .
+      dockerfile: apps/gateway/Dockerfile.dev
+    ports:
+      - '3001:3000'
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev gateway
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+
+  user:
+    build:
+      context: .
+      dockerfile: apps/user/Dockerfile.dev
+    ports:
+      - '3002:3000'
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev user
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

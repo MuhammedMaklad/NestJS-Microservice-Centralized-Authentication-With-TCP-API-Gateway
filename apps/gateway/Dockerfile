@@ -7,11 +7,11 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY tsconfig*.json ./
 COPY nest-cli.json ./
+
 RUN npm install
 
 # Copy source code
-COPY apps/gateway ./apps/gateway
-COPY tsconfig.build.json .
+COPY . .
 
 
 # Build the api-gateway application

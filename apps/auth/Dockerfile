@@ -7,15 +7,16 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY tsconfig.json .
 COPY nest-cli.json .
+
+COPY libs ./libs
+
 RUN npm install
 
 # Copy source code
-COPY apps/gateway ./apps/gateway
-COPY tsconfig.build.json .
-
+COPY . .
 
 # Build the api-gateway application
-RUN npm run build gateway
+RUN npm run build auth
 
 # Production stage
 FROM node:alpine AS production
@@ -38,4 +39,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 EXPOSE 3000
 
 # Command to run the application
-CMD [ "node", "dist/apps/api/main" ]
+CMD [ "node", "dist/apps/auth/main" ]

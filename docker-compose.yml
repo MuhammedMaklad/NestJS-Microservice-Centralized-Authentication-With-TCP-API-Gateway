@@ -43,6 +43,25 @@ services:
     networks:
       - app-network
 
+  database:
+    container_name: postgresql-database
+    image: postgres:latest
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgresql-database-volume:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U admin']
+      interval: 1m
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  postgresql-database-volume:

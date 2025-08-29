@@ -8,12 +8,13 @@ COPY package*.json ./
 COPY tsconfig*.json ./
 COPY nest-cli.json ./
 
+# Copy all libs - necessary for a generic build
+COPY libs ./libs
+
 RUN npm install
 
 # Copy source code
-COPY apps/user ./apps/user
-COPY tsconfig.build.json .
-
+COPY . .
 
 # Build the api-gateway application
 RUN npm run build user
@@ -33,7 +34,7 @@ RUN npm install --only=production
 COPY . .
 
 # Copy built application from builder stage
-COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/dist/ ./dist
 
 # Expose the port the app runs on
 EXPOSE 3000

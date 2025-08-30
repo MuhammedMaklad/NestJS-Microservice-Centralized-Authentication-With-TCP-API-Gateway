@@ -37,7 +37,13 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    command: npm run start:dev user
+    command: >
+      sh -c "
+        npx prisma migrate dev --schema=libs/database/prisma/schema.prisma
+        npx prisma generate --schema=libs/database/prisma/schema.prisma &&
+        npm run start:dev user
+      "
+    # npx prisma migrate deploy --schema=libs/database/prisma/schema.prisma &&
     environment:
       - NODE_ENV=development
     networks:
@@ -52,6 +58,10 @@ services:
       - postgresql-database-volume:/var/lib/postgresql/data
     networks:
       - app-network
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password # <-- Change this!
+      POSTGRES_DB: mydatabase
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U admin']
       interval: 1m

@@ -1,8 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { RegisterUserDto } from './dtos/register-user.dto';
 import { firstValueFrom } from 'rxjs';
-import { CreateUserDto, CreateUserResponse, MESSAGE_PATTERNS } from '@app/shared/interfaces/auth.interface';
+import { MESSAGE_PATTERNS } from '@app/shared/interfaces/auth.interface';
+import { plainToInstance } from 'class-transformer';
+import { CreateUserDto, CreateUserResponse } from '@app/shared/dtos/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,10 +19,13 @@ export class AuthService {
   // TODO: Register User
   async RegisterUser(userCredentials: CreateUserDto): Promise<{ msg: string } | CreateUserResponse> {
 
+    this.logger.log(userCredentials);
 
     const { email } = userCredentials;
 
     const response = this.client.send<boolean>(MESSAGE_PATTERNS.CHECK_USER_EXIST, email);
+
+    this.logger.log(response);
 
     const isExist = await firstValueFrom(response);
 
@@ -34,5 +38,8 @@ export class AuthService {
 
     const user = await firstValueFrom(createUserResponse);
 
+    this.logger.log(user);
+
+    return plainToInstance(CreateUserResponse, user);
   }
 }

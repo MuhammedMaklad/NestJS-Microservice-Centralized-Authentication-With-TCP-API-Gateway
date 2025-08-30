@@ -3,9 +3,12 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { ApiBody } from '@nestjs/swagger';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { instanceToPlain } from 'class-transformer';
 
 @Controller('user')
 export class UserController {
+  private readonly logger = new Logger(UserController.name);
+
   constructor(private readonly userService: UserService) { }
 
   @Get("test")
@@ -25,23 +28,9 @@ export class UserController {
     return user;
   }
 
-  @Get("get-users")
-  async getUsers() {
-    const users = await this.userService.findMany({});
-    return {
-      data: users
-    }
-  }
-
   @Get("get-user/:email")
   async getUserByEmail(@Param('email') email: string) {
     const user = await this.userService.getUserByEmail(email);
-    return user;
-  }
-
-  @Get("get-user/:id")
-  async getUserById(@Param('id') userId: string) {
-    const user = await this.userService.findById(userId);
     return user;
   }
 
@@ -52,10 +41,11 @@ export class UserController {
 
   @MessagePattern({ cmd: "create_user" })
   async createUser(@Payload() userCredentials: CreateUserDto) {
-    Logger.log(userCredentials);
+
+    this.logger.log(userCredentials);
 
     const user = await this.userService.create(userCredentials);
 
-    return user;
+    return instanceToPlain(user);
   }
 }

@@ -7,13 +7,13 @@ async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(AuthModule, {
     transport: Transport.TCP,
     options: {
-      host: "localhost",
-      port: 3001
+      host: "0.0.0.0",
+      port: 4000
     }
   });
   await app.listen();
 }
 bootstrap()
-  .then(() => Logger.log("Auth Microservice Listen To port:3001"))
+  .then(() => Logger.log("Auth Microservice Listen To port:3003"))
   .catch((e) => Logger.error(e))
 

@@ -1,11 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
 import { GatewayService } from './gateway.service';
 
-@Controller()
+@Controller('gateway')
 export class GatewayController {
-  constructor(private readonly gatewayService: GatewayService) {}
+  constructor(private readonly gatewayService: GatewayService) { }
 
-  @Get()
+  @Get('test')
   getHello(): string {
     return this.gatewayService.getHello();
   }

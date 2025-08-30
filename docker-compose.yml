@@ -1,5 +1,6 @@
 services:
   auth:
+    container_name: auth-container
     build:
       context: .
       dockerfile: apps/auth/Dockerfile.dev
@@ -14,6 +15,7 @@ services:
     networks:
       - app-network
   gateway:
+    container_name: gateway-container
     build:
       context: .
       dockerfile: apps/gateway/Dockerfile.dev
@@ -29,6 +31,7 @@ services:
       - app-network
 
   user:
+    container_name: user-container
     build:
       context: .
       dockerfile: apps/user/Dockerfile.dev

@@ -1,48 +1,61 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { ApiBody } from '@nestjs/swagger';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
-@Controller('users')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @Get()
+  @Get("test")
   getHello(): string {
     return this.userService.getHello();
   }
 
-  @Post("signup")
+  @ApiBody({
+    type: CreateUserDto,
+    description: "User Credentials"
+  })
+  @Post("create")
   async registerUser(@Body() userCredential: CreateUserDto) {
     Logger.log(userCredential);
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const user = await this.userService.create(userCredential);
-      return {
-        statusCode: HttpStatus.CREATED,
-        message: "User Created Successfully",
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        data: user
-      };
-    }
-    catch (error) {
-      Logger.error(error);
-      if (error?.code === '23505') { // PostgreSQL unique violation
-        throw new HttpException(
-          'User already exists',
-          HttpStatus.CONFLICT
-        );
-      }
-      throw new HttpException(
-        'Internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
+
+    const user = await this.userService.create(userCredential);
+    return user;
   }
-  @Get("get-user")
+
+  @Get("get-users")
   async getUsers() {
     const users = await this.userService.findMany({});
     return {
       data: users
     }
+  }
+
+  @Get("get-user/:email")
+  async getUserByEmail(@Param('email') email: string) {
+    const user = await this.userService.getUserByEmail(email);
+    return user;
+  }
+
+  @Get("get-user/:id")
+  async getUserById(@Param('id') userId: string) {
+    const user = await this.userService.findById(userId);
+    return user;
+  }
+
+  @MessagePattern({ cmd: "check_user_exist" })
+  async CheckUserExist(@Payload() email: string) {
+    return await this.getUserByEmail(email) ? true : false;
+  }
+
+  @MessagePattern({ cmd: "create_user" })
+  async createUser(@Payload() userCredentials: CreateUserDto) {
+    Logger.log(userCredentials);
+
+    const user = await this.userService.create(userCredentials);
+
+    return user;
   }
 }

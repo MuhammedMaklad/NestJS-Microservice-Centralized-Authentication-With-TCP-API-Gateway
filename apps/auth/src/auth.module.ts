@@ -1,10 +1,22 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
-  imports: [],
+  imports: [
+    ClientsModule.register([
+      {
+        name: "USER_SERVICE",
+        transport: Transport.TCP,
+        options: {
+          host: "user",
+          port: 3001
+        }
+      },
+    ])
+  ],
   controllers: [AuthController],
   providers: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

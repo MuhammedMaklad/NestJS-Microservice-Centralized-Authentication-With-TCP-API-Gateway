@@ -12,4 +12,8 @@ export class UserService extends BaseService<User, Prisma.UserCreateInput, Prism
   getHello(): string {
     return 'Hello World!';
   }
+
+  async getUserByEmail(email: string) {
+    return await this.userRepository.findFirst({ email });
+  }
 }

@@ -3,7 +3,7 @@
 export class UserEntity {
   id: string;
 
-  user: string;
+  username: string;
 
   email: string;
 

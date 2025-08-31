@@ -24,6 +24,7 @@ import { AuthController } from './auth/auth.controller';
         }
       }
     ])
+    ,
   ],
   controllers: [GatewayController, AuthController],
   providers: [GatewayService],

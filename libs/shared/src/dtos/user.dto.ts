@@ -19,3 +19,13 @@ export class CreateUserResponse {
   username: string;
   email: string;
 }
+
+export class UserCredentials {
+  @ApiProperty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty()
+  @IsString()
+  password: string;
+}

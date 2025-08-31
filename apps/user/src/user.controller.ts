@@ -3,7 +3,9 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { ApiBody } from '@nestjs/swagger';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { instanceToPlain } from 'class-transformer';
+import { instanceToPlain, plainToClass } from 'class-transformer';
+import { UserCredentials } from '@app/shared/dtos/user.dto';
+import { UserEntity } from '@app/shared/entities/user.entity';
 
 @Controller('user')
 export class UserController {
@@ -47,5 +49,16 @@ export class UserController {
     const user = await this.userService.create(userCredentials);
 
     return instanceToPlain(user);
+  }
+
+  @MessagePattern({ cmd: "valid_user" })
+  async validUser(@Payload() userCredentials: UserCredentials): Promise<UserEntity | null> {
+    const { email, password } = userCredentials;
+    const user = await this.userService.getUserByEmail(email);
+    if (!user)
+      return null;
+    if (password != user.password)
+      return null;
+    return plainToClass(UserEntity, user);
   }
 }

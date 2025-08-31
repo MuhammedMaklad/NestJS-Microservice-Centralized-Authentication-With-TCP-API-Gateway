@@ -29,7 +29,7 @@ async function bootstrap() {
   await app.startAllMicroservices();
 
   Logger.log(
-    `🚀 Application is running on: http://localhost:${3001}/${APP_GLOBAL_PREFIX}`,
+    `🚀 Application is running on: http://localhost:${3001}/${APP_GLOBAL_PREFIX}` + "\n" +
     `🚀 Swagger is running on: http://localhost:${3001}/swagger`,
   );
 

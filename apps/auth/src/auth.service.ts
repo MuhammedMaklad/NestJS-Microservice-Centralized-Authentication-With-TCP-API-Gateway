@@ -68,4 +68,15 @@ export class AuthService {
       token
     }
   }
+
+  // TODO: Validate Token
+  async validateToken(token: string) {
+    try {
+      const decode = await this.jwtService.verifyAsync(token);
+      return { valid: true, userId: decode.sub, username: decode.username };
+    } catch (error) {
+      this.logger.error(error);
+      return { valid: false, userId: null, username: null };
+    }
+  }
 }

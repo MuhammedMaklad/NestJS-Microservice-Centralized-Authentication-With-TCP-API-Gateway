@@ -21,4 +21,9 @@ export class AuthController {
   async login(@Payload() userCredentials: UserCredentials) {
     return await this.authService.LoginUser(userCredentials);
   }
+
+  @MessagePattern("validate_token")
+  async validateToken(@Payload() token: string) {
+    return await this.validateToken(token);
+  }
 }

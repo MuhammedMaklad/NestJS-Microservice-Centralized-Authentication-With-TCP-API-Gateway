@@ -61,4 +61,9 @@ export class UserController {
       return null;
     return plainToClass(UserEntity, user);
   }
+
+  @MessagePattern({ cmd: "get_user_info" })
+  async getUserInfo(@Payload() userId: string) {
+    return await this.userService.findById(userId);
+  }
 }
